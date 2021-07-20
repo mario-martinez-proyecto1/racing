@@ -1,143 +1,132 @@
-float xCoord;
-float yCoord;
-float alto;
-float ancho;
+/*
+Declaración de variables
+**/
+float x; // valor default del largo
+float y; // valor default del ancho
+float cX; // valor default de la coordenada X
+float cY; // valor default de la coordenada Y
+float coordX; // coordenada en el eje x
+float coordY; // coordenada en el eje y
+float largo; // largo de la imagen del carro
+float ancho; // ancho de la imagen del carro
+float velocidadMedia; // velocidad media considerando variaciones de 1 segundo
+float aceleracionMedia; // aceleración media considerando variaciones de 1 segundo
+float tiempo; // tiempo total del juego
+int tiempoJugador1; // tiempo de recorrido de la pista del jugador 1 
+int tiempoJugador2; // tiempo de recorrido de la pista del jugador 2
+float tiempoJuego; // tiempo total del juego
+float tiempoXJugador; // tiempo de juego de cada jugador
+float tiempoPrevio; // tiempo previo a la salida de cada jugador
+PImage fondo; // imagen de fondo del juego
+PImage car; // imagen del carro que está en la pista
+String msjTiempo; // mensaje de control del tiempo del juego
+String msjVelocidadMedia; // mensaje de velocidad media en lapsos de 1 segundo
+String msjAceleracionMedia; // mensaje de aceleración media en lapsos de 1 segundo
+String msjTimpoRecorridoCar1; // mensaje de tiempo empleado en completar el recorrido del carro 1
+String msjTimpoRecorridoCar2; // mensaje de tiempo empleado en completar el recorrido del carro 2
+Game game; // instancia de la clase Game
 
-float tiempo;
-int score = 0;
-float tiempoJuego;
-float tiempoXJugador;
-float tiempoPrevio;
-PImage fondo, imgPlayer;
-int player;
-//Car redCar, yellowCar;
-String msjTiempo;
-Game game = new Game();
-boolean state;
-//Car [] cars = new Car[2];
-
+/*
+Inicialización de las variables del juego
+**/
 void setup() {
-  game.cargarImagenes();
-  fondo = game.imgs[8];
-  player = 1;
-  imgPlayer = game.inicializarPrimerJugador();
-  alto = 34;
-  ancho = 80;
   size(800, 700);
-  state = game.gameState;
-  score = 0;
+  x = 80;
+  ancho = x;
+  y = 34;
+  largo = y;
+  cX = 365;
+  coordX = cX;
+  cY = 634;
+  coordY = cY;
+  game = new Game(ancho, largo, coordX, coordY);
+  game.cargarImagenes();
+  game.inicializarPrimerasImagenes();
+  fondo = game._fondo;
+  image(fondo, 0, 135, 800, 564);
+  velocidadMedia = 0;
+  aceleracionMedia = 0;
+  tiempo = 0;
+  tiempoJugador1 = 0;
+  tiempoJugador2 = 0;
   tiempoJuego = 0;
-  tiempoXJugador = 10;
+  tiempoXJugador = 30;
   tiempoPrevio = 5;
   msjTiempo = "";
-  xCoord = game.coordenadaX();
-  yCoord = game.coordenadaY();
+  msjVelocidadMedia = "";
+  msjAceleracionMedia = "";
+  msjTimpoRecorridoCar1 = "";
+  msjTimpoRecorridoCar2 = "";
 }
 
+/*
+Método bucle que ejecuta el juego
+**/
 void draw() {
-
   background(255);
-
   image(fondo, 0, 135, 800, 564);
-  xCoord = game.coordenadaX();
-  yCoord = game.coordenadaY();
-  image(imgPlayer, xCoord, yCoord, ancho, alto);
-  fill(255, 0, 0);
-  text("Coordenadas: (" + xCoord + ", " + yCoord + ")", 620, 70);
-  noFill();
-  stroke(255, 0, 0);
-  arc(200, 300, 50, 50, 0, HALF_PI, OPEN);
-  fill(0);
+  textSize(15);
   tiempoJuego = millis() /1000;
-  game.stateGame(state, tiempoJuego, tiempoXJugador);
-  state = game.gameState;
-  if (state == true && tiempoXJugador + tiempoPrevio <= tiempoJuego
-    && tiempoXJugador + 2 * tiempoPrevio >= tiempoJuego) {
-    println("cambio de carro " + tiempoJuego );
-    imgPlayer = game.imgs[5];
-    player = 2;
-    //image(game.imgs[5],365,634,80,34);
-    game.setCoordX(365);
-    game.setCoordY(634);
-    //xCoord = 365;
-    //yCoord = 634;
-    //println("carrro 2 estado "+state);
-  } else if (state == false && tiempoPrevio >= tiempoJuego) {
-    game.setCoordX(365);
-    game.setCoordY(634);
-    //xCoord = 365;
-    //yCoord = 634;
-  }
-
+  //fill(255, 0, 0);
+  //text(millis(), 30, 40);
+  
+  game.play(tiempoJuego, tiempoXJugador, tiempoPrevio);
+  car = game._car;
+  game.desplazamiento();
+  coordX = game._coordX;
+  coordY = game._coordY;
+  largo = game._largo;
+  ancho = game._ancho;
+  image(car, coordX, coordY, ancho, largo);
+  
   msjTiempo = game.controlTiempo(tiempoJuego, tiempoXJugador, tiempoPrevio);
   if (msjTiempo == "Game Over") {
+    text("tiempo Car 1: " + game._tiempoCar1,470,69);
+    text("tiempo Car 2: " + game._tiempoCar2,630,69);
+    if (game._tiempoCar1 < game._tiempoCar2) {
+      text("Ganador Carro 1 por " + (game._tiempoCar2 - game._tiempoCar1) + " segundos",187,114);
+    } else {
+      text("Ganador Carro 2 por " + (game._tiempoCar1 - game._tiempoCar2) + " segundos",187,114);
+    }
     noLoop(); //termina una vez llegado al final
-    textSize(25);
   }
-  text(msjTiempo, 10, 20);
+  
   // muestra el tiempo en pantalla
   fill(0);
+  game.cambioTiempo(millis());
+  text("Velocidad: " + game._velocidadMediad, 19, 69);
+  text("Aceleración: " + game._aceleracionMedia, 242, 69);
+  //text("desplazamiento: " + game._desplazamientoTotal, 100, 120);
+  //textSize(25);
+  text(msjTiempo, 290, 20);
+  //game.stopRace(tiempoJuego);
 }
 
 
-//boolean stateCar(){
-
-//}
 
 void mousePressed() {
-
-  //xCoord = mouseX;
-  //yCoord = mouseY;
   game.setCoordX(mouseX);
   game.setCoordY(mouseY);
-  println("x " + game.coordenadaX() + " y " + game.coordenadaY());
+  println("x " + game._coordX + " y " + game._coordY);
 }
 
 void keyPressed() {
   if (keyCode == RIGHT) {
-    println("mov a la derecha");
-    alto = 34;
-    ancho = 80;
-    if (player == 1) {
-      imgPlayer = game.imgs[1];
-    } else {
-      imgPlayer = game.imgs[5];
-    }
+    game.giroDerecha();
   }
   if (keyCode == LEFT) {
-    println("mov a la izquierda");
-    alto = 34;
-    ancho = 80;
-    if (player == 1) {
-      imgPlayer = game.imgs[3];
-    } else {
-      imgPlayer = game.imgs[7];
-    }
+    game.giroIzqiuerda();
   }
   if (keyCode == DOWN) {
-    println("mov hacia abajo");
-    alto = 80;
-    ancho = 34;
-    if (player == 1) {
-      imgPlayer = game.imgs[2];
-    } else {
-      imgPlayer = game.imgs[6];
-    }
+    game.giroAbajo();
   }
   if (keyCode == UP) {
-    println("movimiento hacia arriba");
-    alto = 80;
-    ancho = 34;
-    if (player == 1) {
-      imgPlayer = game.imgs[0];
-    } else {
-      imgPlayer = game.imgs[4];
-    }
+    game.giroArriba();
   }
   if (key == 'a' || key == 'A') { // aceleración
-    game.aceleracionCar(tiempoJuego);
+    game.aceleracionCar();
   }
   if (key == 'd' || key == 'D') { // desaceleración
-    game.desaceleracionCar(tiempoJuego);
+    game.desaceleracionCar();
   }
 }
