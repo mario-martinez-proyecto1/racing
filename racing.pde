@@ -27,6 +27,17 @@ String msjTimpoRecorridoCar2; // mensaje de tiempo empleado en completar el reco
 Game game; // instancia de la clase Game
 
 /*
+Observaciones: los cilos del método draw no son constantes, lo que provoca que la velocidad varía
+(aumente o disminuya) aún cuando no se esté acelerando, las variaciones obedecen a las 
+fluctuaciones del ciclo.
+por esta razón el cálculo de la velocidad media y aceleración media en cada ciclo se utilizó una
+variación en el tiempo de 1, y esta se ajustó por un factor de corrección de 22.32, de forma que esta velocidad
+sea similar a la velocidad media de todo el recorrido, en el cual se utiliza la distancia y el 
+tiempo de recorrido
+**/
+
+
+/*
 Inicialización de las variables del juego
 **/
 void setup() {
@@ -72,7 +83,7 @@ void draw() {
   
   game.play(tiempoJuego, tiempoXJugador, tiempoPrevio);
   car = game._car;
-  game.desplazamiento();
+  game.desplazamiento(tiempoJuego);
   coordX = game._coordX;
   coordY = game._coordY;
   largo = game._largo;
@@ -81,12 +92,12 @@ void draw() {
   
   msjTiempo = game.controlTiempo(tiempoJuego, tiempoXJugador, tiempoPrevio);
   if (msjTiempo == "Game Over") {
-    text("tiempo Car 1: " + game._tiempoCar1,470,69);
-    text("tiempo Car 2: " + game._tiempoCar2,630,69);
+    text("Tiempo Car 1: " + game._tiempoCar1,470,69);
+    text("Tiempo Car 2: " + game._tiempoCar2,630,69);
     if (game._tiempoCar1 < game._tiempoCar2) {
-      text("Ganador Carro 1 por " + (game._tiempoCar2 - game._tiempoCar1) + " segundos",187,114);
+      text("Ganador Carro 1 por " + (game._tiempoCar2 - game._tiempoCar1) + " segundos",470,20);
     } else {
-      text("Ganador Carro 2 por " + (game._tiempoCar1 - game._tiempoCar2) + " segundos",187,114);
+      text("Ganador Carro 2 por " + (game._tiempoCar1 - game._tiempoCar2) + " segundos",470,20);
     }
     noLoop(); //termina una vez llegado al final
   }
@@ -94,11 +105,17 @@ void draw() {
   // muestra el tiempo en pantalla
   fill(0);
   game.cambioTiempo(millis());
-  text("Velocidad: " + game._velocidadMediad, 19, 69);
-  text("Aceleración: " + game._aceleracionMedia, 242, 69);
+  text("Velocidad: " + game._velocidadMedia * 22.32 + " m/s", 19, 69);
+  text("Aceleración: " + game._aceleracionMedia * 50 + " m/s2", 242, 69);
+  if (game._velocidadMediaCar1 > 0 ) {
+    text("Velocidad media Carro 1: " + game._velocidadMediaCar1 + " m/s", 19, 110);
+  }
+  if (game._velocidadMediaCar2 > 0 ) {
+    text("Velocidad media Carro 2: " + game._velocidadMediaCar2 + " m/s", 470, 110);
+  }
   //text("desplazamiento: " + game._desplazamientoTotal, 100, 120);
   //textSize(25);
-  text(msjTiempo, 290, 20);
+  text(msjTiempo, 19, 20);
   //game.stopRace(tiempoJuego);
 }
 
@@ -124,7 +141,7 @@ void keyPressed() {
     game.giroArriba();
   }
   if (key == 'a' || key == 'A') { // aceleración
-    game.aceleracionCar();
+    game.aceleracionCar(tiempoJuego);
   }
   if (key == 'd' || key == 'D') { // desaceleración
     game.desaceleracionCar();
