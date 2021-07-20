@@ -336,12 +336,12 @@ class Game {
   }
   void velocidadMedia() {
     //_velocidadMediad = _movimiento / _variacionTiempo;
-    _velocidadMedia = _movimiento / 1;
+    _velocidadMedia = _movimiento * 22.315;
     aceleracionMedia();
   }
   void aceleracionMedia() { 
     //_aceleracionMedia = (_velocidadMediad - _velocidadInicial) / _variacionTiempo;
-    _aceleracionMedia = (_velocidadMedia - _velocidadInicial) / 1;
+    _aceleracionMedia = (_velocidadMedia - _velocidadInicial) * 22.315;
     _velocidadInicial = _velocidadMedia;
     recorridoTotal();
   }

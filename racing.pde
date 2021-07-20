@@ -30,10 +30,11 @@ Game game; // instancia de la clase Game
 Observaciones: los cilos del método draw no son constantes, lo que provoca que la velocidad varía
 (aumente o disminuya) aún cuando no se esté acelerando, las variaciones obedecen a las 
 fluctuaciones del ciclo.
-por esta razón el cálculo de la velocidad media y aceleración media en cada ciclo se utilizó una
-variación en el tiempo de 1, y esta se ajustó por un factor de corrección de 22.32, de forma que esta velocidad
-sea similar a la velocidad media de todo el recorrido, en el cual se utiliza la distancia y el 
-tiempo de recorrido
+por esta razón en el cálculo de la velocidad media y aceleración media en cada ciclo se utilizó una
+relación constante del ciclo, que corresponde a a 44.8129 ciclos por cada segundo, este valor
+es una aproximación, lo que permite que la velocidad media de todo el recorrido se similar a la
+velocidad a lo largo del recorrido, bajo el supuesto de mantener constante la velocidad, es decir,
+acelerar en los primeros segundos hasta llegar a cierta velocidad y mantenerla en ese valor
 **/
 
 
@@ -105,8 +106,8 @@ void draw() {
   // muestra el tiempo en pantalla
   fill(0);
   game.cambioTiempo(millis());
-  text("Velocidad: " + game._velocidadMedia * 22.32 + " m/s", 19, 69);
-  text("Aceleración: " + game._aceleracionMedia * 50 + " m/s2", 242, 69);
+  text("Velocidad: " + game._velocidadMedia + " m/s", 19, 69);
+  text("Aceleración: " + game._aceleracionMedia + " m/s2", 242, 69);
   if (game._velocidadMediaCar1 > 0 ) {
     text("Velocidad media Carro 1: " + game._velocidadMediaCar1 + " m/s", 19, 110);
   }
