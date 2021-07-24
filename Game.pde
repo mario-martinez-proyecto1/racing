@@ -134,7 +134,8 @@ class Game {
 
   /*
   Método:           play
-   Descripción:      Método que permite establecer el valor de los parámetros del juego
+   Descripción:      Método que permite inicializar los parámetros del juego, enviado a otros
+   métodos según el momento en que se encuentre.
    Parámetros:
    pTiempoJuego      variable de tipo float que representa el tiempo de juego en segundos
    pTiempoPrevio     variable de tipo float que representa el tiempo previo de salida de 
@@ -158,23 +159,24 @@ class Game {
     }
   }
   /*
- Método:           inicializarInicio
-   Descripción:      Método que permite inicializar las imágen del inicio del juego
+   Método:           inicializarInicio
+   Descripción:      Método que permite inicializar las imagenes del carro y del fondo al inicio del juego
    **/
   void inicializarInicio() {
     _car = imgs[1];
     _fondo = imgs[8];
   }
   /*
- Método:           inicializarSalidaJugador1
-   Descripción:      Método que permite inicializar la salida del jugador 1 en el tiempo previo de salida
+   Método:           inicializarSalidaJugador1
+   Descripción:      Método que permite mantener el carro del jugador 1, en la posición de salida
+   en el tiempo previo de salida
    **/
   void inicializarSalidaJugador1() {
     _coordX = cX;
     _coordY = cY;
   }
   /*
- Método:           inicializarJugador2
+   Método:           inicializarJugador2
    Descripción:      Método que permite inicializar las variables para la salida del jugador 2
    **/
   void inicializarJugador2() {
@@ -199,69 +201,70 @@ class Game {
     _estadoRaceCar1 =  false;
   }
   /*
- Método:           inicializarSalidaJugador2
-   Descripción:      Método que permite inicializar la salida del jugador 2 en el tiempo previo de salida
+   Método:           inicializarSalidaJugador2
+   Descripción:      Método que permite mantener el carro del jugador 2, en la posición de salida
    **/
   void inicializarSalidaJugador2() {
     _coordX = cX;
     _coordY = cY;
   }
   /*
- Método:           aceleracionCar
-   Descripción:      Método que permite aumentar la aceleración
+   Método:           aceleracionCar
+   Descripción:      Método que permite acelerar, según el estado en que se encuentre el carro
+   Parámetros:
+   pTiempoJuego      variable que representa el tiempo de juego
    **/
   void aceleracionCar(float pTiempoJuego  ) {
     if ( pTiempoJuego > tiempoPrevio && pTiempoJuego <= tiempoXJugador + tiempoPrevio &&
-          _estadoRaceCar1 == false ) {
+      _estadoRaceCar1 == false ) {
       _aceleracion += 1;
       _ajusteMovimiento = _aceleracion * _ajusteAceleracion;
     } else if (pTiempoJuego > 2 * tiempoPrevio + tiempoXJugador && _estadoRaceCar2 == false) {
-    _aceleracion += 1;
+      _aceleracion += 1;
       _ajusteMovimiento = _aceleracion * _ajusteAceleracion;
     }
   }
 
   /*
- Método:           play
-   Descripción:      Método que permite
+   Método:           desaceleracionCar
+   Descripción:      Método que permite desacelerar, según el valor de acelaración previo que presente el carro
    **/
   void desaceleracionCar() { // cambiar a desplazamiento
-    _aceleracion -= 1;
-    _ajusteMovimiento = _aceleracion * _ajusteAceleracion;
-  }
-  void velocidad() {
-    //velocidadFinal = _velocidadInicial + aceleracion * 1;
-  }
-
-  void setSentidoDesplazamiento(int pSentidoDezplazamiento) {
-    if (_sentidoDesplazamiento != pSentidoDezplazamiento) {
-      _sentidoDesplazamiento = pSentidoDezplazamiento;
+    if (_aceleracion > 0) {
+      _aceleracion -= 1;
+      _ajusteMovimiento = _aceleracion * _ajusteAceleracion;
     }
   }
 
+  /*
+   Método:           giroDerecha
+   Descripción:      Método que permite girar el carro a la derecha, estableciendo los valores de las coordenadas
+   'x' y 'y' según el sentido del dezplazamiento
+   **/
   void giroDerecha() {
     if (_sentidoDesplazamiento != 1) {
       _sentidoDesplazamiento = 1;
     }
-    //println("_anchos  " + _ancho + " largo " + _largo);
     if (_ancho != x) {
       _largo = y;
       _ancho = x;
     }
-
     if (_jugador == 1) {
       _car = imgs[1];
     } else {
       _car = imgs[5];
     }
-    //println("_movimiento  " + _movimiento );
   }
 
+  /*
+   Método:           giroIzqiuerda
+   Descripción:      Método que permite girar el carro a la izquierda, estableciendo los valores de las coordenadas
+   'x' y 'y' según el sentido del dezplazamiento
+   **/
   void giroIzqiuerda() {
     if (_sentidoDesplazamiento != 3) {
       _sentidoDesplazamiento = 3;
     }
-    //println("_anchos  " + _ancho + " largo " + _largo);
     if (_ancho != x) {
       _largo = y;
       _ancho = x;
@@ -274,12 +277,15 @@ class Game {
     }
   }
 
+  /*
+   Método:           giroArriba
+   Descripción:      Método que permite girar el carro hacia arriba, estableciendo los valores de las coordenadas
+   'x' y 'y' según el sentido del dezplazamiento
+   **/
   void giroArriba() {
     if (_sentidoDesplazamiento != 4) {
       _sentidoDesplazamiento = 4;
-      //println("sentido " + _sentidoDesplazamiento);
     }
-    //println("_anchos  " + _ancho + " _largo " + _largo);
     if (_ancho != y) {
       _largo = x;
       _ancho = y;
@@ -291,11 +297,15 @@ class Game {
     }
   }
 
+  /*
+   Método:           giroAbajo
+   Descripción:      Método que permite girar el carro hacia abajo, estableciendo los valores de las coordenadas
+   'x' y 'y' según el sentido del dezplazamiento
+   **/
   void giroAbajo() {
     if (_sentidoDesplazamiento != 2) {
       _sentidoDesplazamiento = 2;
     }
-    //println("_anchos  " + _ancho + " _largo " + _largo);
     if (_ancho != y) {
       _largo = x;
       _ancho = y;
@@ -307,6 +317,13 @@ class Game {
     }
   }
 
+  /*
+   Método:           desplazamiento
+   Descripción:      Método que permite establecer el valor de la coordenada del desplazamiento, según el sentido
+   del desplazamiento
+   Parámetro:        
+   pTiempoJuego:     variable de tipo float que representa el tiempo de juego
+   **/
   void desplazamiento(float pTiempoJuego) {
     if ( (pTiempoJuego > tiempoPrevio && pTiempoJuego <= tiempoXJugador + tiempoPrevio) ||
       (pTiempoJuego > 2 * tiempoPrevio + tiempoXJugador) ) {
@@ -323,47 +340,85 @@ class Game {
         _coordX -= _movimiento;
       }
       if (_sentidoDesplazamiento == 4  && _coordY >= 145) {
-        //println("entre desplaz arriba");
         _movimiento = _ajusteMovimiento * _aceleracion;
         _coordY -= _movimiento;
       }
     }
   }
+
+  /*
+   Método:           cambioTiempo
+   Descripción:      Método que permite establecer el cambio de tiempo entre cada ciclo
+   Este método no se utilizó ya que los ciclos no son constantes, ver descripción en método
+   velocidadMedia
+   Parámetro:        
+   pTiempo:         variable de tipo float que representa el tiempo de juego
+   **/
   void cambioTiempo(float pTiempo) {
     _variacionTiempo = (pTiempo - _t0) / 1000;
     _t0 = pTiempo;
     velocidadMedia();
   }
+
+  /*
+   Método:           velocidadMedia
+   Descripción:      Método que permite establecer la velocidad media por ciclo
+   Este método utiliza una constante igual a 22.315 que proviene de 44.8129 ciclos por cada segundo
+   valor apxoximado, ya que los ciclos de la función draw no son constantes, provocando que pese a 
+   no modificar la acelaración el valor de la velocidad sea diferente en cada ciclo. Con esto se 
+   logra que la velocidad sea constante cuando no se acelere o desacelere, y es una aproximación al
+   al valor generado como velocidad promedio de todo el recorrido.
+   Parámetro:        
+   **/
   void velocidadMedia() {
-    //_velocidadMediad = _movimiento / _variacionTiempo;
+    //_velocidadMediad = _movimiento / _variacionTiempo; método no utilizado por ciclos inconstantes
     _velocidadMedia = _movimiento * 22.315;
     aceleracionMedia();
   }
+
+  /*
+   Método:           aceleracionMedia
+   Descripción:      Método que permite establecer la aceleración media por ciclo
+   Este método utiliza una constante igual a 22.315 que proviene de 44.8129 ciclos por cada segundo
+   valor apxoximado, ya que los ciclos de la función draw no son constantes, provocando que pese a 
+   no modificar la acelaración el valor de la velocidad sea diferente en cada ciclo. Con esto se 
+   logra que la velocidad sea constante cuando no se acelere o desacelere, y es una aproximación al
+   al valor generado como velocidad promedio de todo el recorrido.
+   Parámetro:        
+   **/
   void aceleracionMedia() { 
     //_aceleracionMedia = (_velocidadMediad - _velocidadInicial) / _variacionTiempo;
     _aceleracionMedia = (_velocidadMedia - _velocidadInicial) * 22.315;
     _velocidadInicial = _velocidadMedia;
     recorridoTotal();
   }
+
+  /*
+   Método:           recorridoTotal
+   Descripción:      Método que permite establecer recorrido total de la carrera
+   **/
   void recorridoTotal() {
     _desplazamientoTotal += _movimiento;
     stopRace();
   }
+
+  /*
+   Método:           stopRace
+   Descripción:      Método que permite detener la carrera, cuando el carro hace el recorrido total
+   de la pista
+   **/
   void stopRace() {
     if ( (_desplazamientoTotal > 3000 && _coordX >= cX  && _coordY >= 612 && _coordY <= 691) 
       || (tiempoJuego == tiempoPrevio + tiempoXJugador) ) {
-      //println("entra a stop");
       _movimiento = 0;
       _aceleracion = 0;
       if (_tiempoCar1 == 0 && _estadoRaceCar1 ==  false) {
         _tiempoCar1 = tiempoJuego - tiempoPrevio;
         _velocidadMediaCar1 = _desplazamientoTotal / _tiempoCar1;
-        println("tiempoCar1 " + _tiempoCar1 +  " tiempoJuego " + tiempoJuego + " tiempoPrevio " + tiempoPrevio);
       } else if (_tiempoCar2 == 0 && _estadoRaceCar2 ==  false && _estadoRaceCar1 ==  true) {
         _tiempoCar2 = tiempoJuego - (2 * tiempoPrevio + tiempoXJugador);
         _estadoRaceCar2 = true;
         _velocidadMediaCar2 = _desplazamientoTotal / _tiempoCar2;
-        println("tiempoCar2 " + _tiempoCar2 +  " tiempoJuego " + tiempoJuego + " 2 tiempoPrevio " + (2 * tiempoPrevio) + " tiempoXJugador " + tiempoXJugador);
       }
       _estadoRaceCar1 =  true;
       _desplazamientoTotal = 0;
