@@ -227,7 +227,7 @@ class Game {
 
   /*
    Método:           desaceleracionCar
-   Descripción:      Método que permite desacelerar, según el valor de acelaración previo que presente el carro
+   Descripción:      Método que permite desacelerar, según el valor de aceleración previo que presente el carro
    **/
   void desaceleracionCar() { // cambiar a desplazamiento
     if (_aceleracion > 0) {
